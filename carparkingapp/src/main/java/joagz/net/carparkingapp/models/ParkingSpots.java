@@ -24,18 +24,13 @@ public class ParkingSpots {
   @Id
   private Integer id;
 
+  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JoinColumn(referencedColumnName = "id", name = "history")
+  private ParkingHistory history;
+
   private Boolean occuped;
 
   public ParkingSpots() {}
-
-  public ParkingSpots(
-    ParkingLots lot,
-    Boolean occuped,
-    ParkingHistory parking_history
-  ) {
-    this.lot = lot;
-    this.occuped = occuped;
-  }
 
   public ParkingSpots(ParkingLots lot, Boolean occuped) {
     this.lot = lot;

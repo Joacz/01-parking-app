@@ -1,7 +1,10 @@
 package joagz.net.carparkingapp.controllers;
 
+import java.util.Date;
 import java.util.List;
+import joagz.net.carparkingapp.db.ParkingHistoryJpa;
 import joagz.net.carparkingapp.db.ParkingSpotsJpa;
+import joagz.net.carparkingapp.models.ParkingHistory;
 import joagz.net.carparkingapp.models.ParkingSpots;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -25,6 +28,9 @@ public class SpotsController {
   @Autowired
   private ParkingSpotsJpa parkingSpotsJpa;
 
+  @Autowired
+  private ParkingHistoryJpa parkingHistoryJpa;
+
   @GetMapping("/")
   @CrossOrigin(origins = "*")
   public List<ParkingSpots> findAll(Authentication authentication) {
@@ -39,8 +45,19 @@ public class SpotsController {
   ) {
     try {
       ParkingSpots parking_spot = parkingSpotsJpa.findById(id);
-      parking_spot.setOccuped(!parking_spot.getOccuped());
-      parkingSpotsJpa.save(parking_spot);
+      ParkingHistory p_history = parkingHistoryJpa.findById(
+        parking_spot.getHistory().getId()
+      );
+      if (parking_spot.getOccuped()) {
+        p_history.setEnd_time(new Date());
+        parking_spot.setOccuped(false);
+        parkingSpotsJpa.exit(parking_spot, new Date());
+      } else {
+        p_history.setEnd_time(null);
+        parking_spot.setOccuped(true);
+        p_history.setStart_time(new Date());
+        parkingSpotsJpa.park(parking_spot, new Date());
+      }
       return new ResponseEntity<ParkingSpots>(HttpStatus.OK);
     } catch (NotFoundException e) {
       return new ResponseEntity<ParkingSpots>(HttpStatus.NOT_FOUND);

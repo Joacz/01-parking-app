@@ -25,8 +25,8 @@ public class ParkingHistory {
   @Id
   private Integer id;
 
-  private Date start_time;
-  private Date end_time;
+  private Date start_time = null;
+  private Date end_time = null;
 
   public ParkingHistory() {}
 
@@ -37,10 +37,9 @@ public class ParkingHistory {
   ) {
     this.start_time = start_time;
     this.end_time = end_time;
-    this.parking_spot = parking_spot;
   }
 
-  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinColumn(referencedColumnName = "id", name = "parking_spot")
-  private ParkingSpots parking_spot;
+  public ParkingHistory(Date start_time, ParkingSpots parking_spot) {
+    this.start_time = start_time;
+  }
 }

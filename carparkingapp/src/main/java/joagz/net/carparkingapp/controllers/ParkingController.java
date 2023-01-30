@@ -2,12 +2,17 @@ package joagz.net.carparkingapp.controllers;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import joagz.net.carparkingapp.db.ParkingHistoryJpa;
 import joagz.net.carparkingapp.db.ParkingLotsJpa;
 import joagz.net.carparkingapp.db.ParkingSpotsJpa;
+import joagz.net.carparkingapp.db.UsersJpa;
 import joagz.net.carparkingapp.models.ParkingHistory;
 import joagz.net.carparkingapp.models.ParkingLots;
 import joagz.net.carparkingapp.models.ParkingSpots;
+import joagz.net.carparkingapp.repo.UsersRepository;
+import joagz.net.carparkingapp.user.UserDTO;
+import joagz.net.carparkingapp.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +37,8 @@ public class ParkingController {
   private ParkingSpotsJpa parkingSpotsJpa;
 
   @Autowired
-  private ParkingHistoryJpa parkingHistoryJpa;
+  private UsersRepository usersJpa;
+
 
   @GetMapping("/")
   @CrossOrigin(origins = "*")
@@ -47,6 +53,11 @@ public class ParkingController {
     Authentication authentication
   ) {
     try {
+      Integer user_id = body.getOwner().getId();
+
+      Optional<Users> user = usersJpa.findById(user_id);
+      body.setOwner(user.get());
+
       parkingLotsJpa.save(body);
       for (int i = 0; i <= body.getSpots(); i++) {
         ParkingSpots p_spot = new ParkingSpots(body, false);

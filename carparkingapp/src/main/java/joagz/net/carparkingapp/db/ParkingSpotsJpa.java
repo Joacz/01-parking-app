@@ -1,7 +1,9 @@
 package joagz.net.carparkingapp.db;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import joagz.net.carparkingapp.models.ParkingHistory;
 import joagz.net.carparkingapp.models.ParkingLots;
 import joagz.net.carparkingapp.models.ParkingSpots;
 import joagz.net.carparkingapp.repo.ParkingLotsRepository;
@@ -21,6 +23,9 @@ public class ParkingSpotsJpa implements IParkingSpotsService {
 
   @Autowired
   private ParkingLotsRepository lotsRepo;
+
+  @Autowired
+  private ParkingHistoryJpa parkingHistoryJpa;
 
   @Override
   public List<ParkingSpots> findAll() {
@@ -44,6 +49,29 @@ public class ParkingSpotsJpa implements IParkingSpotsService {
 
   @Override
   public void save(ParkingSpots p_spot) {
+    p_spot.setHistory(parkingHistoryJpa.save(new ParkingHistory()));
+    repo.save(p_spot);
+  }
+
+  @Override
+  public void park(ParkingSpots p_spot, Date start_time) {
+    ParkingHistory history = parkingHistoryJpa.findById(
+      p_spot.getHistory().getId()
+    );
+    history.setStart_time(start_time);
+    parkingHistoryJpa.save(history);
+    p_spot.setHistory(history);
+    repo.save(p_spot);
+  }
+
+  @Override
+  public void exit(ParkingSpots p_spot, Date end_time) {
+    ParkingHistory history = parkingHistoryJpa.findById(
+      p_spot.getHistory().getId()
+    );
+    history.setEnd_time(end_time);
+    parkingHistoryJpa.save(history);
+    p_spot.setHistory(history);
     repo.save(p_spot);
   }
 

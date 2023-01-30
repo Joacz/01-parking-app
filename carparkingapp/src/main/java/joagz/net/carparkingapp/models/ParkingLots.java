@@ -37,5 +37,5 @@ public class ParkingLots {
 
   private String name;
   private String location;
-  private Date creation_date;
+  private Date creation_date = new Date();
 }

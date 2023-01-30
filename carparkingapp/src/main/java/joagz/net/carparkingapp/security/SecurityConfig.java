@@ -84,8 +84,9 @@ public class SecurityConfig {
       .securityMatcher("/token")
       .authorizeHttpRequests(auth -> auth.requestMatchers("/token").permitAll())
       .sessionManagement(session ->
-        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
       )
+      .csrf(csrf -> csrf.disable())
       .httpBasic(withDefaults())
       .build();
   }
@@ -102,6 +103,7 @@ public class SecurityConfig {
           .anyRequest()
           .authenticated()
       )
+      .csrf(csrf -> csrf.disable())
       .oauth2ResourceServer(oauth2 -> oauth2.jwt())
       .sessionManagement(session ->
         session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)

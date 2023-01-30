@@ -33,7 +33,8 @@ public class ParkingHistoryJpa implements IParkingHistoryService {
   }
 
   @Override
-  public void save(ParkingHistory p_history) {
+  public ParkingHistory save(ParkingHistory p_history) {
     repo.save(p_history);
+    return p_history;
   }
 }

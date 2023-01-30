@@ -12,6 +12,6 @@ public interface IParkingHistoryService {
 
   public void delete(ParkingHistory p_history);
 
-  public void save(ParkingHistory p_history);
+  public ParkingHistory save(ParkingHistory p_history);
 
 }
